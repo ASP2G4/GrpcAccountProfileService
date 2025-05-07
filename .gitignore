@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /GrpcAccountProfileService/appsettings.json
 /GrpcAccountProfileService/appsettings.json
+/GrpcAccountProfileService/appsettings.Development.json
