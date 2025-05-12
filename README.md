@@ -191,8 +191,7 @@ rpc DeleteProfileByUserId(DeleteProfileByUserIdRequest) returns (DeleteProfileBy
 
 ## Usage
 - **File Location**: The endpoint definitions are in `Protos/profile.proto`.
-- **Rendering**: Place this Markdown content in a `.md` file (e.g., `README.md` or `docs/endpoints.md`) in your GitHub repository. GitHub will render the JSON and Protobuf code blocks with syntax highlighting.
-- **Verification**: After pushing to $ gitHub, view the file to ensure the Markdown and code blocks render correctly.
+
 ---
   ### Project Structure
   - GrpcAccountProfileService/Services/ProfileService.cs – gRPC service implementation
