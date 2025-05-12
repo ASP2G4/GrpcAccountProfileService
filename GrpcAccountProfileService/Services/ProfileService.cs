@@ -5,7 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GrpcAccountProfileService.Services
 {
-    public class ProfileService(AccountProfileContext context) : ProfileHandler.ProfileHandlerBase
+    public interface IProfileService
+    {
+        Task<GetProfileByUserIdReply> GetProfileByUserId(GetProfileByUserIdRequest request, ServerCallContext context);
+        Task<CreateProfileReply> CreateProfile(CreateProfileRequest request, ServerCallContext context);
+        Task<UpdateProfileReply> UpdateProfile(UpdateProfileRequest request, ServerCallContext context);
+        Task<DeleteProfileByUserIdReply> DeleteProfileByUserId(DeleteProfileByUserIdRequest request, ServerCallContext context);
+    }
+    public class ProfileService(AccountProfileContext context) : ProfileHandler.ProfileHandlerBase, IProfileService
     {
         private readonly AccountProfileContext _context = context;
 
@@ -46,6 +53,9 @@ namespace GrpcAccountProfileService.Services
 
         public override async Task<CreateProfileReply> CreateProfile(CreateProfileRequest request, ServerCallContext context)
         {
+            if (request.Profile == null)
+                return new CreateProfileReply { Success = false, Message = "Account profile is null" };
+
             var userProfileExist = await _context.AccountProfiles
                 .FirstOrDefaultAsync(p => p.UserId == request.Profile.UserId);
 
@@ -73,9 +83,6 @@ namespace GrpcAccountProfileService.Services
                 }
             };
 
-            if (accountProfile == null)
-                return new CreateProfileReply { Success = false, Message = "Account profile is null" };
-
             _context.AccountProfiles.Add(accountProfile);
             await _context.SaveChangesAsync();
 
@@ -83,15 +90,14 @@ namespace GrpcAccountProfileService.Services
         }
         public override async Task<UpdateProfileReply> UpdateProfile(UpdateProfileRequest request, ServerCallContext context)
         {
-            var profile = await _context.AccountProfiles
-                .Include(p => p.Address)
-                .FirstOrDefaultAsync(p => p.UserId == request.Profile.UserId);
-
-            if (profile == null)
+            if (request.Profile == null)
             {
                 return new UpdateProfileReply { Success = false };
             }
 
+            var profile = await _context.AccountProfiles
+                .Include(p => p.Address)
+                .FirstOrDefaultAsync(p => p.UserId == request.Profile.UserId);
             profile.FirstName = request.Profile.FirstName;
             profile.LastName = request.Profile.LastName;
             profile.PhoneNumber = request.Profile.PhoneNumber;
@@ -106,6 +112,9 @@ namespace GrpcAccountProfileService.Services
 
         public override async Task<DeleteProfileByUserIdReply> DeleteProfileByUserId(DeleteProfileByUserIdRequest request, ServerCallContext context)
         {
+            if (request == null || string.IsNullOrWhiteSpace(request.UserId))
+                return new DeleteProfileByUserIdReply { Success = false };
+
             var profile = await _context.AccountProfiles
                 .FirstOrDefaultAsync(p => p.UserId == request.UserId);
 
