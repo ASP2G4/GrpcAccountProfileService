@@ -43,18 +43,34 @@ A .NET 9 gRPC service for managing user account profiles and addresses, using En
    cd GrpcAccountProfileService
    ```
 ---
-### gRPC Endpoints
-All endpoints are defined in Protos/profile.proto.
- ```sh
-1. GetProfileByUserId
-RPC:
-rpc GetProfileByUserId(GetProfileByUserIdRequest) returns (GetProfileByUserIdReply);
+## gRPC Endpoints
 
-Request Example:
+All endpoints are defined in `Protos/profile.proto`.
+
+### Overview
+This document describes the gRPC endpoints for managing user profiles, including retrieving, creating, updating, and deleting profiles. Each endpoint includes its RPC definition, request/response examples, and relevant details.
+
+---
+
+### 1. GetProfileByUserId
+
+#### Description
+Retrieves a user's profile by their `user_id`.
+
+#### RPC Definition
+```proto
+rpc GetProfileByUserId(GetProfileByUserIdRequest) returns (GetProfileByUserIdReply);
+```
+
+#### Example Request
+```json
 {
   "user_id": "12345"
 }
-Response Example:
+```
+
+#### Example Response
+```json
 {
   "profile": {
     "id": "1",
@@ -70,12 +86,22 @@ Response Example:
   },
   "status_code": 200
 }
+```
 
 ---
-2. CreateProfile
-RPC:
+
+### 2. CreateProfile
+
+#### Description
+Creates a new user profile.
+
+#### RPC Definition
+```proto
 rpc CreateProfile(CreateProfileRequest) returns (CreateProfileReply);
-Request Example:
+```
+
+#### Example Request
+```json
 {
   "profile": {
     "user_id": "12345",
@@ -89,17 +115,30 @@ Request Example:
     }
   }
 }
+```
 
-Response Example:
+#### Example Response
+```json
 {
   "success": true,
-  "message": "Account succesfully created"
+  "message": "Account successfully created"
 }
+```
 
-3. UpdateProfile
-RPC:
+---
+
+### 3. UpdateProfile
+
+#### Description
+Updates an existing user profile.
+
+#### RPC Definition
+```proto
 rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileReply);
-Request Example:
+```
+
+#### Example Request
+```json
 {
   "profile": {
     "user_id": "12345",
@@ -113,23 +152,47 @@ Request Example:
     }
   }
 }
-Response Example:
-{
-  "success": true
-}
----
-4. DeleteProfileByUserId
-RPC:
-rpc DeleteProfileByUserId(DeleteProfileByUserIdRequest) returns (DeleteProfileByUserIdReply);
-Request Example:
-{
-  "user_id": "12345"
-}
-Response Example:
+```
+
+#### Example Response
+```json
 {
   "success": true
 }
 ```
+
+---
+
+### 4. DeleteProfileByUserId
+
+#### Description
+Deletes a user profile by their `user_id`.
+
+#### RPC Definition
+```proto
+rpc DeleteProfileByUserId(DeleteProfileByUserIdRequest) returns (DeleteProfileByUserIdReply);
+```
+
+#### Example Request
+```json
+{
+  "user_id": "12345"
+}
+```
+
+#### Example Response
+```json
+{
+  "success": true
+}
+```
+
+---
+
+## Usage
+- **File Location**: The endpoint definitions are in `Protos/profile.proto`.
+- **Rendering**: Place this Markdown content in a `.md` file (e.g., `README.md` or `docs/endpoints.md`) in your GitHub repository. GitHub will render the JSON and Protobuf code blocks with syntax highlighting.
+- **Verification**: After pushing to $ gitHub, view the file to ensure the Markdown and code blocks render correctly.
 ---
   ### Project Structure
   - GrpcAccountProfileService/Services/ProfileService.cs – gRPC service implementation
@@ -147,8 +210,9 @@ Response Example:
   - For Azure App Service deployment, use a Linux plan for native gRPC support.
 
 
-Activity Diagram
-Create Profile
+## Activity Diagram
+## Create Profile
+```mermaid
 flowchart TD
     Start([Start])
     Request[Client sends CreateProfile request]
@@ -164,8 +228,10 @@ flowchart TD
     Exists -- Yes --> Fail
     Exists -- No --> Create --> Save --> Success --> End
     Fail --> End
-
-Get Profile By UserId
+```
+---
+## Get Profile By UserId
+```mermaid
 flowchart TD
     Start([Start])
     Request[Client sends GetProfileByUserId request]
@@ -178,8 +244,9 @@ flowchart TD
     Start --> Request --> Lookup --> Found
     Found -- Yes --> ReturnProfile --> End
     Found -- No --> NotFound --> End
-
-Update Profile
+```
+## Update Profile
+```mermaid
 flowchart TD
     Start([Start])
     Request[Client sends UpdateProfile request]
@@ -195,8 +262,9 @@ flowchart TD
     Start --> Request --> Validate --> Lookup --> Found
     Found -- Yes --> Update --> Save --> Success --> End
     Found -- No --> Fail --> End
-
-Delete Profile By UserId
+```
+## Delete Profile By UserId
+```mermaid
 flowchart TD
     Start([Start])
     Request[Client sends DeleteProfileByUserId request]
@@ -211,10 +279,11 @@ flowchart TD
     Start --> Request --> Lookup --> Found
     Found -- Yes --> Delete --> Save --> Success --> End
     Found -- No --> Fail --> End
-
+```
     
-Sequence Diagram 
-Create Profile
+## Sequence Diagram 
+## Create Profile
+```mermaid
 sequenceDiagram
     participant Client
     participant Service as ProfileService
@@ -230,8 +299,9 @@ sequenceDiagram
         DB-->>Service: Confirmation
         Service-->>Client: CreateProfileReply(Success=true, Message="Account succesfully created")
     end
-    
+ ```   
 Get Profile By UserId
+```mermaid
 sequenceDiagram
     participant Client
     participant Service as ProfileService
@@ -246,8 +316,9 @@ sequenceDiagram
         DB-->>Service: null
         Service-->>Client: GetProfileByUserIdReply(Profile=null, StatusCode=404)
     end
-
+```
 Update Profile
+```mermaid
 sequenceDiagram
     participant Client
     participant Service as ProfileService
@@ -265,8 +336,9 @@ sequenceDiagram
         DB-->>Service: null
         Service-->>Client: UpdateProfileReply(Success=false)
     end
-
+```
 Delete Profile By UserId
+```mermaid
 sequenceDiagram
     participant Client
     participant Service as ProfileService
@@ -283,3 +355,4 @@ sequenceDiagram
         DB-->>Service: null
         Service-->>Client: DeleteProfileByUserIdReply(Success=false)
     end
+```
